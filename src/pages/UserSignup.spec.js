@@ -86,7 +86,7 @@ describe('UserSignupPage', ()=> {
                 return new Promise((resolve, error)=>{
                     setTimeout(()=> {
                         resolve({});
-                    }, 3000)
+                    }, 100)
                    
                 });
             })
@@ -239,5 +239,30 @@ describe('UserSignupPage', ()=> {
             expect(spinner).not.toBeInTheDocument();
         });
 
+        it('hides spinner after api call finishes with an error', async () => {
+            const actions = {
+                postSignup: jest.fn().mockImplementation(()=>{
+                    return new Promise((resolve, reject)=>{
+                         setTimeout(()=>{
+                            reject({
+                                response: {data:{}}
+                            })
+                         }, 200)
+                    })
+                })
+            };
+            const { queryByText } = setupForSubmit({ actions });
+            fireEvent.click(button);
+            
+            // this can be used
+            await waitForElementToBeRemoved(() => queryByText('Loading...'))
+         
+            const spinner = queryByText('Loading...');
+            expect(spinner).not.toBeInTheDocument();
+        });
+
+
     });
 });
+
+console.error= ()=>{};

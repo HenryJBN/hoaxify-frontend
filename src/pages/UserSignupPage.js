@@ -38,10 +38,14 @@ export class UserSignupPage extends React.Component{
             password:this.state.password
         };
         this.setState({pendingApiCall:true});
-        this.props.actions.postSignup(user).then((response)=>{
+        this.props.actions.postSignup(user)
+        .then(response=> {
             
             this.setState({pendingApiCall:false});
-        });
+        })
+        .catch(error=>{
+            this.setState({pendingApiCall:false})
+        })
     }
 
 
@@ -82,9 +86,10 @@ export class UserSignupPage extends React.Component{
                         onClick={this.onClickSignup}
                         disabled={this.state.pendingApiCall}>
                             {this.state.pendingApiCall && 
-                            (<div className="spinner-border text-light spinner-border-sm mr-1" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                            </div>)}
+                            ( <div className="spinner-border text-light spinner-border-sm mr-1">
+                                <span className="visually-hidden">Loading...</span>
+                             </div>
+                            )}
                         Sign up
                     </button>
                 </div>
