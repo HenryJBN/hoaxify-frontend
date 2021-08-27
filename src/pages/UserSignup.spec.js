@@ -1,9 +1,7 @@
 import React from 'react';
-import { render, cleanup, fireEvent, waitForElementToBeRemoved } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
+import { render, fireEvent, waitForElementToBeRemoved, waitFor } from "@testing-library/react";
 import { UserSignupPage } from "./UserSignupPage";
 
-beforeEach(cleanup);
 
 describe('UserSignupPage', ()=> {
 
@@ -260,6 +258,139 @@ describe('UserSignupPage', ()=> {
             const spinner = queryByText('Loading...');
             expect(spinner).not.toBeInTheDocument();
         });
+
+        it('displays validationn error for displayName when error is received for the field', async ()=>{
+            const actions = {
+                postSignup: jest.fn().mockRejectedValue({
+                  response: {
+                    data: {
+                      validationErrors: {
+                        displayName:'Cannot be null',
+                      },
+                    },
+                  },
+                }),
+              };
+            const {queryByText} = setupForSubmit({actions});
+            fireEvent.click(button);
+            await waitFor(()=> { expect(queryByText('Cannot be null')).toBeInTheDocument() });
+
+        });
+
+        it('enables sign up button when password and repreat password fields have same value', ()=>{
+
+            setupForSubmit();
+            expect(button).not.toBeDisabled();
+            
+
+        });
+
+        it('disables sign up button when repeat password doesnt match  with password ', ()=>{
+
+            setupForSubmit();
+            fireEvent.change(passwordRepeat, changeEvent('new-pass'))
+            expect(button).toBeDisabled();
+            
+
+        });
+
+        it('disables sign up button when password doesnt match  with repreat password ', ()=>{
+
+            setupForSubmit();
+            fireEvent.change(passwordInput, changeEvent('new-pass'))
+            expect(button).toBeDisabled();
+            
+
+        });
+
+        it('displays error style for password repeat input  when password repeat mismatch', ()=>{
+
+            const {queryByText}= setupForSubmit();
+            fireEvent.change(passwordRepeat, changeEvent('new-pass'))
+            const mismatchWarning = queryByText('Does not match to password')
+            expect(mismatchWarning).toBeInTheDocument();
+            
+
+        });
+
+        it('displays error style for password repeat input  when password  mismatch', ()=>{
+
+            const {queryByText}= setupForSubmit();
+            fireEvent.change(passwordInput, changeEvent('new-pass'))
+            const mismatchWarning = queryByText('Does not match to password')
+            expect(mismatchWarning).toBeInTheDocument();
+            
+
+        });
+
+
+        it('hides validation error  when user changes the content of displayName', async ()=>{
+            const actions = {
+                postSignup: jest.fn().mockRejectedValue({
+                  response: {
+                    data: {
+                      validationErrors: {
+                        displayName:'Cannot be null',
+                      },
+                    },
+                  },
+                }),
+              };
+            const {queryByText} = setupForSubmit({actions});
+            fireEvent.click(button);
+            await waitFor(()=> { queryByText('Cannot be null') });
+            fireEvent.change(displayNameInput, changeEvent('name updated'));
+            const errorMessage = queryByText('Cannot be null');
+            expect(errorMessage).not.toBeInTheDocument();
+
+        });
+
+
+        it('hides validation error  when user changes the content of username', async ()=>{
+            const actions = {
+                postSignup: jest.fn().mockRejectedValue({
+                  response: {
+                    data: {
+                      validationErrors: {
+                        username:'Username cannot be null',
+                      },
+                    },
+                  },
+                }),
+              };
+            const {queryByText} = setupForSubmit({actions});
+            fireEvent.click(button);
+            await waitFor(()=> { queryByText('Username cannot be null') });
+            fireEvent.change(usernameInput, changeEvent('name updated'));
+            const errorMessage = queryByText('Username cannot be null');
+            expect(errorMessage).not.toBeInTheDocument();
+
+        });
+
+
+        it('hides validation error  when user changes the content of password', async ()=>{
+            const actions = {
+                postSignup: jest.fn().mockRejectedValue({
+                  response: {
+                    data: {
+                      validationErrors: {
+                        password:'Cannot be null',
+                      },
+                    },
+                  },
+                }),
+              };
+            const {queryByText} = setupForSubmit({actions});
+            fireEvent.click(button);
+            await waitFor(()=> { queryByText('Cannot be null') });
+            fireEvent.change(passwordInput, changeEvent('password updated'));
+            const errorMessage = queryByText('Cannot be null');
+            expect(errorMessage).not.toBeInTheDocument();
+
+        });
+
+        
+
 
 
     });
