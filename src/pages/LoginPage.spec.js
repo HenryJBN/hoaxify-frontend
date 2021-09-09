@@ -219,6 +219,7 @@ describe('LoginPage', ()=>{
 
             setupForSubmit({actions});
             fireEvent.click(button);
+            
             fireEvent.click(button);
             expect(actions.postLogin).toHaveBeenCalledTimes(1);
 

@@ -32,7 +32,7 @@ export class LoginPage extends React.Component{
 
         .catch(error =>{
             if(error.response){
-                this.setState({apiError: error.response.data.message})
+                this.setState({apiError: error.response.data.message, pendingApiCall:false})
             }
         });
     }
