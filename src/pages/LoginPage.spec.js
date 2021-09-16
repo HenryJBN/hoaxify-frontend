@@ -278,6 +278,21 @@ describe('LoginPage', ()=>{
         });
 
 
+        it('redirects to homepage after successful login', async () => {
+            const actions = {
+                postLogin: jest.fn().mockResolvedValue({})
+                
+            };
+            const history ={
+                push: jest.fn()
+            }
+            setupForSubmit({ actions, history });
+            fireEvent.click(button);
+            await waitFor(()=> expect(history.push).toHaveBeenCalledWith('/'));
+            
+        });
+
+
     });
 
 

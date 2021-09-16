@@ -1,19 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 import { UserSignupPage } from "./pages/UserSignupPage";
 import * as apiCalls  from "./api/apiCalls";
 import LoginPage from './pages/LoginPage';
+import { HashRouter } from "react-router-dom";
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import authReducer from './redux/authReducer';
+import logger from 'redux-logger';
 
-const actions = {
-  postLogin : apiCalls.login
-}
+// const loggedInState = {
+//   id:1,
+//   username: 'username1',
+//   displayName:'user1',
+//   password: 'P4ssword',
+//   image: 'profile-image.png',
+//   isLoggedIn: true
+// }
+
+const store = createStore(authReducer,  applyMiddleware(logger));
 
 ReactDOM.render(
   <React.StrictMode>
-   <LoginPage actions={actions}/>
+    <Provider store={store}>
+
+      <HashRouter>
+        <App/>
+      </HashRouter>
+    </Provider>
+  
   </React.StrictMode>,
   document.getElementById('root')
 );
